@@ -1,11 +1,12 @@
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Input, Typography } from "antd";
-import { useNavigate } from "react-router-dom";
-import styles from "./signup.module.css"; // Import your CSS module
+import { useLocation, useNavigate } from "react-router-dom";
+import styles from "./welcome.module.css";
 import ButtonComp from "../ui/ButtonComp";
 import { DevTool } from "@hookform/devtools";
-import { SignUpData } from "../../lib/types";
-import Header from "../header/Header";
+import { useSignUp } from "../../lib/state";
+import { CompleteUserData } from "../../lib/types";
 
 const { Text } = Typography;
 
@@ -27,57 +28,61 @@ const FormInput = ({ name, control, label, type = "text", placeholder }) => (
   </div>
 );
 
-const SignUp = () => {
-  const { control, handleSubmit } = useForm<SignUpData>();
+const WelcomePage = () => {
+  const { state: signUpData } = useLocation(); // Destructure state containing SignUpData
+  const { control, handleSubmit } = useForm<CompleteUserData>({
+    defaultValues: { ...signUpData, firstName: "", lastName: "" },
+  });
   const navigate = useNavigate();
+  const { mutate: signUp, isLoading, isError, error } = useSignUp();
 
-  const onSubmit = (data: SignUpData) => {
-    navigate("/welcome", {
-      state: { email: data.email, password: data.password },
+  const onSubmit = (data: CompleteUserData) => {
+    console.log(data);
+    signUp(data, {
+      onSuccess: () => {
+        navigate("/tags"); // Navigate to success page or other desired page
+      },
+      onError: (err) => {
+        console.error(err);
+      },
     });
   };
 
   return (
     <div className={styles.container}>
-      <Header isLoggedIn={false} page="signup" />
       <div className={styles.signUpModal}>
         <div className={styles.signUpContainer}>
           <div>
-            <Text className={styles.title}>Sign Up</Text>
+            <Text className={styles.title}>Welcome</Text>
           </div>
 
           <Text className={styles.description}>
-            Create an account to access and contribute to Our Resource Hub
+            Please complete your profile to finish your registration.
           </Text>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormInput
-              name="email"
+              name="firstName"
               control={control}
-              label="Email"
-              type="email"
-              placeholder="Enter your email"
+              label="First Name"
+              type="text"
+              placeholder="Enter your first name"
             />
             <FormInput
-              name="password"
+              name="lastName"
               control={control}
-              label="Password"
-              type="password"
-              placeholder="Enter your password"
-            />
-            <FormInput
-              name="confirmPassword"
-              control={control}
-              label="Confirm Password"
-              type="password"
-              placeholder="Confirm your password"
+              label="Last Name"
+              type="text"
+              placeholder="Enter your last name"
             />
             <ButtonComp
               type="primary"
               htmlType="submit"
               className={styles.submitBtn}
+              loading={isLoading}
             >
-              Continue
+              Update
             </ButtonComp>
+            {isError && <Text type="danger">Error: {error.message}</Text>}
           </form>
           <div className={styles.loginLink}>
             <Text onClick={() => navigate("/login")} className={styles.link}>
@@ -91,4 +96,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default WelcomePage;

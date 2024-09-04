@@ -3,5 +3,5 @@
 ## Start Server
 
 ```
-VITE_BACKEND_URL="share-hub-backend-production.up.railway.app" npm run dev
+VITE_BACKEND_URL="http://localhost:8081" npm run dev
 ```

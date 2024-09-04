@@ -22,16 +22,15 @@
 }
 
 .postCard {
-  background: #242831;
-  border-radius: 16px;
+  background: #fff;
+  border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 300px;
-  border: 1px solid #797979;
   padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s;
+  transition: transform 0.2s; /* Smooth transition for hover effect */
 }
 
 .thumbnail {
